@@ -28,7 +28,7 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests((auth) -> auth
                         // 누구나 접근 허용: 루트(/)와 로그인 페이지(/login)
-                        .requestMatchers("/", "/login").permitAll()
+                        .requestMatchers("/", "/login", "/loginProc", "/join", "/joinProc").permitAll()
 
                         // "/admin" 경로는 "ADMIN" 역할만 접근 가능
                         .requestMatchers("/admin").hasRole("ADMIN")
