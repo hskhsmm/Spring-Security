@@ -1,15 +1,18 @@
+package com.example.securitytest.controller;
+
 import com.example.securitytest.dto.JoinDTO;
 import com.example.securitytest.service.JoinService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 
 @Controller
+@RequiredArgsConstructor
 public class JoinController {
 
-    @Autowired
-    private JoinService joinService;
+    private final JoinService joinService;
 
 
     @GetMapping("/join")
