@@ -58,6 +58,15 @@ public class SecurityConfig {
                         auth.disable()
                 );
 
+        http
+                .sessionManagement((auth) -> auth
+                        .maximumSessions(1) //하나의 아이디에 대해 다중 로그인 허용 개수
+                        .maxSessionsPreventsLogin(true)); //초과할 경우 새로운 로그인 차단
+
+
+        http
+                .sessionManagement((auth) -> auth
+                        .sessionFixation().changeSessionId());
 
 
         return http.build(); // 최종 SecurityFilterChain 객체 생성
