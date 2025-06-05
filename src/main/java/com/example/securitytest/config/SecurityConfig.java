@@ -11,6 +11,11 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableWebSecurity
 public class SecurityConfig {
 
+    // Spring Security는 사용자 인증 시 입력한 비밀번호를 DB에 저장된 암호화된 비밀번호와 비교함.
+    // 이때 동일한 해시 알고리즘으로 암호화해야 비교가 가능하므로 비밀번호를 BCrypt 방식으로 암호화하고 검증하기 위해 이 Bean을 등록함.
+    // 회원 가입 시: raw password → encode() → 암호화된 문자열 저장
+    // 로그인 시: 입력된 비밀번호(raw) vs 저장된 비밀번호(encoded) → matches()로 비교
+
     @Bean
     public BCryptPasswordEncoder bCryptPasswordEncoder() {
 
