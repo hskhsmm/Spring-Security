@@ -18,13 +18,11 @@ public class SecurityConfig {
 
     @Bean
     public BCryptPasswordEncoder bCryptPasswordEncoder() {
-
         return new BCryptPasswordEncoder();
     }
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-
 
         http
                 .authorizeHttpRequests((auth) -> auth
@@ -35,7 +33,6 @@ public class SecurityConfig {
                         // "/my/**" 하위 경로는 "ADMIN" 또는 "USER" 역할만 접근 가능
                         .requestMatchers("/my/**").hasAnyRole("ADMIN", "USER")
                         // 위에 명시되지 않은 모든 요청은 인증된 사용자만 접근 가능
-
                         .anyRequest().authenticated()
                 );
 
@@ -43,34 +40,40 @@ public class SecurityConfig {
                 .formLogin((auth) -> auth
                         // 사용자 정의 로그인 페이지 경로 설정 (GET /login 요청을 처리할 HTML 페이지 필요)
                         .loginPage("/login")
-
                         // 로그인 요청을 처리할 URL (POST /loginProc 요청이 들어오면 Spring Security가 자동 처리)
                         .loginProcessingUrl("/loginProc")
-
+                        // 로그인 성공 시 리다이렉트할 URL 설정
+                        .defaultSuccessUrl("/", true)
+                        // 로그인 실패 시 리다이렉트할 URL 설정
+                        .failureUrl("/login?error=true")
                         // 로그인 관련 리소스는 모두 인증 없이 접근 가능하도록 허용
                         .permitAll()
                 );
 
         http
-                .csrf((auth) ->
-                        // CSRF 보호 기능 비활성화
-                        // 보통 REST API, 간단한 테스트용 프로젝트에서는 disable() 처리함
-                        auth.disable()
+                .sessionManagement((auth) -> auth
+                        .maximumSessions(1) // 하나의 아이디에 대해 다중 로그인 허용 개수
+                        .maxSessionsPreventsLogin(true) // 초과할 경우 새로운 로그인 차단
                 );
 
         http
                 .sessionManagement((auth) -> auth
-                        .maximumSessions(1) //하나의 아이디에 대해 다중 로그인 허용 개수
-                        .maxSessionsPreventsLogin(true)); //초과할 경우 새로운 로그인 차단
-
+                        .sessionFixation().changeSessionId()
+                );
 
         http
-                .sessionManagement((auth) -> auth
-                        .sessionFixation().changeSessionId());
+                .logout((auth) -> auth
+                        .logoutUrl("/logout")
+                        .logoutSuccessUrl("/")
+                        .invalidateHttpSession(true) // 세션 무효화
+                        .deleteCookies("JSESSIONID") // 쿠키 삭제
+                );
 
+        // CSRF 보호 활성화 (보안 강화)
+        http.csrf(csrf -> csrf
+                .ignoringRequestMatchers("/h2-console/**") // H2 콘솔 사용 시에만 추가
+        );
 
         return http.build(); // 최종 SecurityFilterChain 객체 생성
-
-
     }
 }
