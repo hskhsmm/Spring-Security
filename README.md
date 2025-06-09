@@ -9,13 +9,14 @@ Spring Boot와 Spring Security를 활용한 간단한 사용자 인증 및 권�
 - [프로젝트 구조](#-프로젝트-구조)
 - [사용법](#-사용법)
 - [API 엔드포인트](#-api-엔드포인트)
+- [화면](#-화면)
 
 ## 🚀 프로젝트 개요
 
 Spring Security를 사용한 기본적인 웹 인증 시스템입니다. 일반 사용자와 관리자 권한을 구분하며 특별한 관리자 키로 관리자 권한을 부여할 수 있습니다.
 
 **핵심 특징:**
-- 🔑관리자 키를 통한 자동 권한 부여
+- 🔑 관리자 키를 통한 자동 권한 부여
 - 🎨 반응형 UI
 - 🛡️ 기본 보안 설정
 - 👤 사용자 정보 페이지
@@ -76,7 +77,7 @@ src/main/resources/templates/
 └── my/profile.html                     # 내 정보 페이지
 ```
 
-## 사용법
+## 📖 사용법
 
 ### 일반 사용자 가입
 1. 회원가입 페이지 접속
@@ -100,8 +101,7 @@ src/main/resources/templates/
 | 로그인 | `/login` | 로그인 폼 | 비인증 사용자 |
 | 회원가입 | `/join` | 회원가입 폼 | 비인증 사용자 |
 
-
-## API 엔드포인트
+## 🔗 API 엔드포인트
 
 ### 인증 관련
 ```http
@@ -123,9 +123,8 @@ GET  /my/profile         # 내 정보 페이지
 GET  /admin              # 관리자 패널
 ```
 
+## 📱 화면
 
-
-## 화면
 <p align="center">
   <img src="https://github.com/user-attachments/assets/56fb724a-a49e-4a24-a0ec-abe0410e193e" width="400"/><br/>
   <img src="https://github.com/user-attachments/assets/d222c31b-1efb-4018-9db5-054fb80dbd5e" width="400"/><br/>
@@ -135,4 +134,3 @@ GET  /admin              # 관리자 패널
   <img src="https://github.com/user-attachments/assets/c0dcfd6c-ed61-4f4c-afcf-79ab2635ba9b" width="400"/><br/>
   <img src="https://github.com/user-attachments/assets/6fc51958-2b45-4bf1-b9e1-3963c46222c6" width="400"/>
 </p>
-
