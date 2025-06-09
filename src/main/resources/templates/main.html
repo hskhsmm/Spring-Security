@@ -1,13 +1,292 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Main Page</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>메인 페이지</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 20px 0;
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            color: #667eea;
+        }
+
+        .nav-menu {
+            display: flex;
+            gap: 30px;
+            align-items: center;
+        }
+
+        .nav-menu a {
+            color: #555;
+            text-decoration: none;
+            font-weight: 500;
+            padding: 8px 16px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-menu a:hover {
+            background: #f8f9fa;
+            color: #667eea;
+        }
+
+        .logout-btn {
+            background: #e74c3c !important;
+            color: white !important;
+        }
+
+        .logout-btn:hover {
+            background: #c0392b !important;
+            color: white !important;
+        }
+
+        .main-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 60px 20px;
+        }
+
+        .welcome-card {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            margin-bottom: 40px;
+            transition: transform 0.3s ease;
+        }
+
+        .welcome-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .user-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 0 auto 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            color: white;
+        }
+
+        .welcome-title {
+            font-size: 32px;
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .user-info {
+            font-size: 18px;
+            color: #7f8c8d;
+            margin-bottom: 30px;
+        }
+
+        .role-badge {
+            display: inline-block;
+            padding: 8px 20px;
+            border-radius: 25px;
+            font-weight: 600;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .role-admin {
+            background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
+            color: white;
+        }
+
+        .role-user {
+            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+            color: white;
+        }
+
+        .role-anonymous {
+            background: linear-gradient(135deg, #95a5a6 0%, #7f8c8d 100%);
+            color: white;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+        }
+
+        .feature-card {
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+        }
+
+        .feature-icon {
+            font-size: 48px;
+            margin-bottom: 20px;
+        }
+
+        .feature-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+
+        .feature-description {
+            color: #7f8c8d;
+            line-height: 1.6;
+        }
+
+        .action-button {
+            display: inline-block;
+            padding: 12px 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 25px;
+            font-weight: 600;
+            margin-top: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .action-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .admin-only {
+            border: 2px solid #f39c12;
+            background: linear-gradient(135deg, #fff9e6 0%, #ffeaa7 100%);
+        }
+    </style>
 </head>
 <body>
-main page
-<hr>
-<span th:text="${id}"></span><br>
-<span th:text="${role}"></span>
+<header class="header">
+    <div class="nav-container">
+        <div class="logo">🏠 MyApp</div>
+        <nav class="nav-menu">
+            <a href="/">홈</a>
+            <a href="/my/profile" th:if="${id != 'Guest'}">내 정보</a>
+            <a href="/admin" th:if="${role == 'ROLE_ADMIN'}">관리자</a>
+            <a href="/logout" class="logout-btn" th:if="${id != 'Guest'}">로그아웃</a>
+            <a href="/login" th:if="${id == 'Guest'}">로그인</a>
+        </nav>
+    </div>
+</header>
+
+<main class="main-content">
+    <div class="welcome-card">
+        <div class="user-avatar">
+            <span th:if="${role == 'ROLE_ADMIN'}">👑</span>
+            <span th:if="${role == 'ROLE_USER'}">👤</span>
+            <span th:if="${role == 'ANONYMOUS'}">🚶</span>
+        </div>
+
+        <h1 class="welcome-title">
+            안녕하세요, <span th:text="${id}">사용자</span>님!
+        </h1>
+
+        <p class="user-info">
+            현재 접속 상태로 서비스를 이용하고 계십니다.
+        </p>
+
+        <div class="role-badge"
+             th:class="'role-badge ' + ${role == 'ROLE_ADMIN' ? 'role-admin' : (role == 'ROLE_USER' ? 'role-user' : 'role-anonymous')}">
+            <span th:if="${role == 'ROLE_ADMIN'}">👑 관리자</span>
+            <span th:if="${role == 'ROLE_USER'}">👤 일반 사용자</span>
+            <span th:if="${role == 'ANONYMOUS'}">🚶 방문자</span>
+        </div>
+    </div>
+
+    <div class="features-grid">
+        <div class="feature-card" th:if="${id != 'Guest'}">
+            <div class="feature-icon">📋</div>
+            <h3 class="feature-title">내 정보 관리</h3>
+            <p class="feature-description">
+                개인 정보를 확인하고 수정할 수 있습니다.
+            </p>
+            <a href="/my/profile" class="action-button">내 정보 보기</a>
+        </div>
+
+        <div class="feature-card admin-only" th:if="${role == 'ROLE_ADMIN'}">
+            <div class="feature-icon">⚙️</div>
+            <h3 class="feature-title">관리자 패널</h3>
+            <p class="feature-description">
+                시스템 관리 및 사용자 관리 기능을 제공합니다.
+            </p>
+            <a href="/admin" class="action-button">관리자 페이지</a>
+        </div>
+
+        <div class="feature-card" th:if="${id == 'Guest'}">
+            <div class="feature-icon">🔐</div>
+            <h3 class="feature-title">회원 가입</h3>
+            <p class="feature-description">
+                새로운 계정을 만들어 더 많은 기능을 이용해보세요.
+            </p>
+            <a href="/join" class="action-button">회원가입</a>
+        </div>
+
+        <div class="feature-card">
+            <div class="feature-icon">📱</div>
+            <h3 class="feature-title">모바일 친화적</h3>
+            <p class="feature-description">
+                모든 디바이스에서 최적화된 경험을 제공합니다.
+            </p>
+        </div>
+
+        <div class="feature-card">
+            <div class="feature-icon">🔒</div>
+            <h3 class="feature-title">보안</h3>
+            <p class="feature-description">
+                Spring Security로 안전하게 보호되는 시스템입니다.
+            </p>
+        </div>
+    </div>
+</main>
 </body>
 </html>
