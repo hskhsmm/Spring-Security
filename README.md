@@ -8,10 +8,8 @@ Spring Boot와 Spring Security를 활용한 완전한 사용자 인증 및 권�
 - [주요 기능](#-주요-기능)
 - [기술 스택](#-기술-스택)
 - [프로젝트 구조](#-프로젝트-구조)
-- [설치 및 실행](#-설치-및-실행)
 - [사용법](#-사용법)
 - [보안 설정](#-보안-설정)
-- [UI 특징](#-ui-특징)
 - [API 엔드포인트](#-api-엔드포인트)
 
 ## 🚀 프로젝트 개요
@@ -172,6 +170,14 @@ GET  /my/profile         # 내 정보 페이지
 GET  /admin              # 관리자 패널 (ADMIN 권한 필요)
 ```
 
-
-
+## 화면
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/56fb724a-a49e-4a24-a0ec-abe0410e193e" width="400"/><br/>
+  <img src="https://github.com/user-attachments/assets/d222c31b-1efb-4018-9db5-054fb80dbd5e" width="400"/><br/>
+  <img src="https://github.com/user-attachments/assets/d99283ec-2d1f-48d5-9614-90f884d08d46" width="400"/><br/>
+  <img src="https://github.com/user-attachments/assets/84fc116f-1a2c-4f24-8580-53a3a5d8b0d3" width="400"/><br/>
+  <img src="https://github.com/user-attachments/assets/22dd6cc2-995d-416d-b592-e4816d29a231" width="400"/><br/>
+  <img src="https://github.com/user-attachments/assets/c0dcfd6c-ed61-4f4c-afcf-79ab2635ba9b" width="400"/><br/>
+  <img src="https://github.com/user-attachments/assets/6fc51958-2b45-4bf1-b9e1-3963c46222c6" width="400"/>
+</p>
 
