@@ -2,6 +2,7 @@ package com.example.securitytest.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -36,19 +37,22 @@ public class SecurityConfig {
                         .anyRequest().authenticated()
                 );
 
+//        http
+//                .formLogin((auth) -> auth
+//                        // 사용자 정의 로그인 페이지 경로 설정 (GET /login 요청을 처리할 HTML 페이지 필요)
+//                        .loginPage("/login")
+//                        // 로그인 요청을 처리할 URL (POST /loginProc 요청이 들어오면 Spring Security가 자동 처리)
+//                        .loginProcessingUrl("/loginProc")
+//                        // 로그인 성공 시 리다이렉트할 URL 설정
+//                        .defaultSuccessUrl("/", true)
+//                        // 로그인 실패 시 리다이렉트할 URL 설정
+//                        .failureUrl("/login?error=true")
+//                        // 로그인 관련 리소스는 모두 인증 없이 접근 가능하도록 허용
+//                        .permitAll()
+//                );
+
         http
-                .formLogin((auth) -> auth
-                        // 사용자 정의 로그인 페이지 경로 설정 (GET /login 요청을 처리할 HTML 페이지 필요)
-                        .loginPage("/login")
-                        // 로그인 요청을 처리할 URL (POST /loginProc 요청이 들어오면 Spring Security가 자동 처리)
-                        .loginProcessingUrl("/loginProc")
-                        // 로그인 성공 시 리다이렉트할 URL 설정
-                        .defaultSuccessUrl("/", true)
-                        // 로그인 실패 시 리다이렉트할 URL 설정
-                        .failureUrl("/login?error=true")
-                        // 로그인 관련 리소스는 모두 인증 없이 접근 가능하도록 허용
-                        .permitAll()
-                );
+                .httpBasic(Customizer.withDefaults());
 
         http
                 .sessionManagement((auth) -> auth
