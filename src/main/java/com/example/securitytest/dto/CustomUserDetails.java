@@ -7,7 +7,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 //로그인한 사용자의 정보를 담기 위한 UserDetails 구현체
 @RequiredArgsConstructor
