@@ -3,6 +3,7 @@ package com.example.securitytest.controller;
 import com.example.securitytest.entity.UserEntity;
 import com.example.securitytest.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
+@Slf4j
 @Controller
 @RequestMapping("/my")
 @RequiredArgsConstructor
@@ -27,25 +29,30 @@ public class MyController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
 
-        // 데이터베이스에서 사용자 정보 조회
-        UserEntity user = userRepository.findByUsername(username);
+        //  Optional 사용으로 null 안전성 확보
+        UserEntity user = userRepository.findByUsername(username)
+                .orElseThrow(() -> {
+                    log.error("인증된 사용자를 DB에서 찾을 수 없음: {}", username);
+                    return new IllegalStateException("사용자 정보를 찾을 수 없습니다");
+                });
 
-        if (user == null) {
-            // 사용자를 찾을 수 없는 경우 로그인 페이지로 리다이렉트
-            return "redirect:/login";
-        }
-
-        // 권한 정보 가져오기
-        String role = authentication.getAuthorities().iterator().next().getAuthority();
+        //  Stream API로 더 안전한 권한 처리
+        String role = authentication.getAuthorities().stream()
+                .findFirst()
+                .map(grantedAuthority -> grantedAuthority.getAuthority())
+                .orElse("ROLE_USER");
 
         // 현재 시간 (마지막 접속 시간으로 사용)
-        String currentTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+        String currentTime = LocalDateTime.now()
+                .format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
 
         // 모델에 사용자 정보 추가
         model.addAttribute("user", user);
         model.addAttribute("role", role);
         model.addAttribute("lastAccess", currentTime);
         model.addAttribute("isAdmin", "ROLE_ADMIN".equals(role));
+
+        log.debug("프로필 페이지 접근: {}, 권한: {}", username, role);
 
         return "my/profile";
     }
