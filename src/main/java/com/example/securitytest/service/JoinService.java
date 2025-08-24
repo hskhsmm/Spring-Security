@@ -4,10 +4,14 @@ import com.example.securitytest.dto.JoinDTO;
 import com.example.securitytest.entity.UserEntity;
 import com.example.securitytest.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class JoinService {
@@ -19,40 +23,65 @@ public class JoinService {
     @Value("${app.admin.secret-key:defaultSecretKey}")
     private String adminSecretKey;
 
+    @Transactional
     public void joinProcess(JoinDTO joinDTO) {
+        // 입력값 검증 로직 분리
+        validateJoinInput(joinDTO);
 
-        // 입력값 검증
-        if (joinDTO.getUsername() == null || joinDTO.getUsername().trim().isEmpty()) {
-            throw new IllegalArgumentException("회원이름을 입력하세요");
+        // 중복 사용자 체크
+        if (userRepository.existsByUsername(joinDTO.getUsername())) {
+            throw new IllegalArgumentException("이미 존재하는 사용자명입니다: " + joinDTO.getUsername());
         }
 
-        if (joinDTO.getPassword() == null || joinDTO.getPassword().trim().isEmpty()) {
-            throw new IllegalArgumentException("비밀번호를 입력하세요");
+        // 사용자 엔티티 생성
+        UserEntity userEntity = createUserEntity(joinDTO);
+
+        // 저장
+        userRepository.save(userEntity);
+
+        log.info("회원가입 완료: {}, 권한: {}", userEntity.getUsername(), userEntity.getRole());
+    }
+
+    private void validateJoinInput(JoinDTO joinDTO) {
+        if (!StringUtils.hasText(joinDTO.getUsername())) {
+            throw new IllegalArgumentException("사용자명을 입력해주세요");
         }
 
-        // db에 이미 동일한 username을 가진 회원이 존재하는지 확인
-        boolean isUser = userRepository.existsByUsername(joinDTO.getUsername());
-        if (isUser) {
-            throw new IllegalArgumentException("동일한 이름의 사용자가 있습니다.");
+        if (!StringUtils.hasText(joinDTO.getPassword())) {
+            throw new IllegalArgumentException("비밀번호를 입력해주세요");
         }
 
-        UserEntity data = new UserEntity();
-        data.setUsername(joinDTO.getUsername());
-        data.setPassword(bCryptPasswordEncoder.encode(joinDTO.getPassword()));
+        if (joinDTO.getPassword().length() < 4) {
+            throw new IllegalArgumentException("비밀번호는 최소 4자리 이상이어야 합니다");
+        }
+    }
 
-        // 🔥 핵심 로직: 관리자 키 검증
-        if (joinDTO.getAdminKey() != null &&
-                !joinDTO.getAdminKey().trim().isEmpty() &&
-                adminSecretKey.equals(joinDTO.getAdminKey().trim())) {
+    private UserEntity createUserEntity(JoinDTO joinDTO) {
+        UserEntity userEntity = new UserEntity();
+        userEntity.setUsername(joinDTO.getUsername().trim());
+        userEntity.setPassword(bCryptPasswordEncoder.encode(joinDTO.getPassword()));
 
-            data.setRole("ROLE_ADMIN");
-            System.out.println("🔐 관리자 권한으로 가입 완료: " + joinDTO.getUsername());
-
+        // 관리자 권한 검증 (보안 강화 버전)
+        if (isValidAdminKey(joinDTO.getAdminKey())) {
+            userEntity.setRole("ROLE_ADMIN");
+            log.warn("🔐 관리자 권한으로 가입: {}", joinDTO.getUsername());
         } else {
-            data.setRole("ROLE_USER");
-            System.out.println("👤 일반 사용자 권한으로 가입 완료: " + joinDTO.getUsername());
+            userEntity.setRole("ROLE_USER");
+            log.info("👤 일반 사용자 권한으로 가입: {}", joinDTO.getUsername());
         }
 
-        userRepository.save(data);
+        return userEntity;
+    }
+
+    private boolean isValidAdminKey(String inputAdminKey) {
+        if (!StringUtils.hasText(inputAdminKey)) {
+            return false;
+        }
+
+        // 보안 강화: 시간 기반 공격 방지를 위한 constant-time 비교
+        byte[] expected = adminSecretKey.getBytes();
+        byte[] actual = inputAdminKey.trim().getBytes();
+
+        return java.security.MessageDigest.isEqual(expected, actual);
     }
 }
