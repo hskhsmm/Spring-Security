@@ -213,7 +213,10 @@
             <a href="/">홈</a>
             <a href="/my/profile" th:if="${id != 'Guest'}">내 정보</a>
             <a href="/admin" th:if="${role == 'ROLE_ADMIN'}">관리자</a>
-            <a href="/logout" class="logout-btn" th:if="${id != 'Guest'}">로그아웃</a>
+            <form th:action="@{/logout}" method="post" th:if="${id != 'Guest'}" style="display:inline;">
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                <button type="submit" class="logout-btn" style="border:none;background:none;">로그아웃</button>
+            </form>
             <a href="/login" th:if="${id == 'Guest'}">로그인</a>
         </nav>
     </div>

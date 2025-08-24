@@ -218,7 +218,10 @@
     <div class="logo">👑 Admin Panel</div>
     <nav class="nav-menu">
       <a href="/">홈으로</a>
-      <a href="/logout">로그아웃</a>
+      <form th:action="@{/logout}" method="post" style="display:inline;">
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+        <button type="submit" style="border:none;background:none;padding:8px 16px;">로그아웃</button>
+      </form>
     </nav>
   </div>
 </header>
